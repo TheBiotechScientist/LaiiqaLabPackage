@@ -12,8 +12,8 @@ from DataAnalysis.helpers import *
 
 class Ozonation:
 
-    def __init__(self):
-        self.title = 'Cinética de Ozonización'
+    # def __init__(self):
+    #     self.title = 'Cinética de Ozonización'
 
     def ozone_plotter(self, matfile, var='data',title='Cinética de Ozonización', subtitle=None, xlabel='Tiempo ', ylabel='$O_3$ [$g/Nm^3$]', label='Conc. $O_3$', width=23, height=15, x0=0, xf=None, y0=-0.5, yf=35.5, time='seg', grid=True, visible=True, dx=1.0, **kwargs):
 
@@ -79,15 +79,16 @@ class Ozonation:
         self.area_total = f'Total ozono generado = {self.area_t:.2f} g/Nm^3 en {max(self.ozone_frame[time][x0:xf])-x0:.0f} {time}'
         self.area_total_ltx = Latex(f'Total ozono generado = $${self.area_t:.2f}~g/Nm^3$$ en {max(self.ozone_frame[time][x0:xf])-x0:.0f} {time}')
 
-        return self.ozone_plot, self.fig, time
+        return self.ozone_plot
 
-def join_plots(frames=list(), labels=list(),title='Cinética de Ozonización', subtitle='', xlabel='Tiempo ', ylabel='$O_3$ [$g/Nm^3$]', time='min', width=23, height=15, x0=0, xf=None, y0=-0.5, yf=35.5, grid=True, visible=True, dx=1.0,**kwargs):
+def join_plots(frames=list(), labels=list(),title='Cinética de Ozonización', subtitle='', xlabel='Tiempo ', ylabel='$O_3$ [$g/Nm^3$]', width=23, height=15, x0=0, xf=None, y0=-0.5, yf=35.5, grid=True, visible=True, dx=1.0,**kwargs):
     wcm = cm2in(width)
     hcm = cm2in(height)
     fig, ax = plt.subplots(figsize=[wcm,hcm])
     for frame,label in zip(frames,labels):
         frame.plot(y='conc', ax=ax, label=label)
 
+    time = frames[0].columns[0]
     plt.suptitle(title, fontsize=14)
     plt.title(subtitle, fontsize=12)
     plt.xlim(x0, xf)
@@ -95,6 +96,7 @@ def join_plots(frames=list(), labels=list(),title='Cinética de Ozonización', s
     plt.xlabel(xlabel+f'({time})', fontsize=12)
     plt.ylabel(ylabel, fontsize=12)
     plt.grid(grid)
+    # plt.show()
     plt.close()
     joined_plots = fig.get_figure()
-    return joined_plots
+    return joined_plots.show()
