@@ -1,6 +1,0 @@
-natsort
-numpy
-pandas
-matplotlib
-h5py
-sklearn
