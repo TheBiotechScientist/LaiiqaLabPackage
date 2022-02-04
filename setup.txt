@@ -1,0 +1,19 @@
+[metadata]
+name = DataAnalysis
+version = 1.0.0
+author = Javier Morales
+author_email = fmoralesm87@gmail.com
+description = Package for ozonation and spectro uv data analysis files
+long_description = file: README.md
+long_description_content_type = text/markdown
+url = ''
+classifiers =
+    Programming Language :: Python :: 3
+    License :: OSI Approved :: MIT License
+    Operating System :: OS Independent
+
+
+[options]
+package = find:
+python_requires = >= 3.7
+include_package_data = True
