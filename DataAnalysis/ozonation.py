@@ -12,10 +12,8 @@ from DataAnalysis.helpers import *
 
 class Ozonation:
 
-    # def __init__(self):
-    #     self.title = 'Cinética de Ozonización'
-
     def plot(self, matfile, var='data',title='Cinética de Ozonización', subtitle=None, xlabel='Tiempo ', ylabel='$O_3$ [$g/Nm^3$]', label='Conc. $O_3$', width=23, height=15, x0=0, xf=None, y0=-0.5, yf=35.5, time='seg', grid=True, visible=True, dx=1.0, **kwargs):
+        self.time = time
         wcm = cm2in(width)
         hcm = cm2in(height)
 
@@ -23,8 +21,7 @@ class Ozonation:
             subtitle = matfile
 
         f = h5.File(matfile,'r')
-        data = f.get(var)
-        data = np.array(data)
+        data = np.array(f.get(var))
         self.allframe = pd.DataFrame(data)
         self.allframe = self.allframe.rename(columns={self.allframe.columns[0]:time, 1:'conc'})
         self.allframe.index = self.allframe[time]
@@ -81,26 +78,29 @@ class Ozonation:
         if visible == False:
             plt.close()
         else:
-            return self.figure.show()
+            plt.show()
 
-def join_plots(frames=list(), labels=list(),title='Cinética de Ozonización', subtitle='', xlabel='Tiempo ', ylabel='$O_3$ [$g/Nm^3$]', width=23, height=15, x0=0, xf=None, y0=-0.5, yf=35.5, grid=True, visible=True, dx=1.0,**kwargs):
-    wcm = cm2in(width)
-    hcm = cm2in(height)
-    # fig1 = plt.figure()
-    fig, ax = plt.subplots(figsize=[wcm,hcm])
-    for frame,label in zip(frames,labels):
-        frame.plot(y='conc', ax=ax, label=label)
 
-    time = frames[0].columns[0]
-    plt.suptitle(title, fontsize=14)
-    plt.title(subtitle, fontsize=12)
-    plt.xlim(x0, xf)
-    plt.ylim(y0, yf)
-    plt.xlabel(xlabel+f'({time})', fontsize=12)
-    plt.ylabel(ylabel, fontsize=12)
-    plt.grid(grid)
-    joined_plots = fig.get_figure()
-    if visible == False:
-        plt.close()
-    else:
-        return joined_plots.show()
+
+    def join(self, frames=list(), labels=list(),title='Cinética de Ozonización', subtitle='', xlabel='Tiempo ', ylabel='$O_3$ [$g/Nm^3$]', width=23, height=15, x0=0, xf=None, y0=-0.5, yf=35.5, grid=True, visible=True, dx=1.0,**kwargs):
+        wcm = cm2in(width)
+        hcm = cm2in(height)
+        # fig1 = plt.figure()
+        fig, ax = plt.subplots(figsize=[wcm,hcm])
+        for frame,label in zip(frames,labels):
+            frame.plot(y='conc', ax=ax, label=label)
+
+        # time = frames[0].columns[0]
+        plt.suptitle(title, fontsize=14)
+        plt.title(subtitle, fontsize=12)
+        plt.xlim(x0, xf)
+        plt.ylim(y0, yf)
+        plt.xlabel(xlabel+f'({self.time})', fontsize=12)
+        plt.ylabel(ylabel, fontsize=12)
+        plt.grid(grid)
+        self.joined_plots = fig.get_figure()
+        if visible == False:
+            plt.close()
+        else:
+            plt.show()
+            # return self.joined_plots
