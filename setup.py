@@ -5,12 +5,12 @@ with open('README.md') as f:
 
 setup(
 name = 'DataAnalysis',
-version = '1.0.0',
-description = 'Package for ozonation and spectro uv data analysis files',
+version = '1.0.1',
+description = 'Package for ozonation, spectro uv and bioreaction data analysis files',
 long_description = long_description,
 long_description_content_type = 'text/markdown',
 license = 'MIT License',
-author = 'F. Javier Morales',
+author = 'F. Javier Morales M.',
 author_email = 'fmoralesm87@gmail.com',
 url = '',
 python_requires = '>=3.7',
@@ -20,7 +20,8 @@ install_requires = [
     'pandas',
     'matplotlib',
     'h5py',
-    'sklearn'
+    'sklearn',
+    'IPython'
 ],
 packages = find_packages(),
 classifiers = [
