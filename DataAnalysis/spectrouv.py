@@ -243,7 +243,7 @@ class SpectroUV:
                       'dx' : '1.0   -> Paso de integración para el cálculo de areas',
                       'visible' : 'True   -> Mostrar o no el gráfico de areas'}
         print("""
-        
+
 INSTRUCCIONES DE USO:
 
     Creación del objeto spectroUV():
