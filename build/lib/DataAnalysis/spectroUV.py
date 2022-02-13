@@ -216,12 +216,12 @@ class SpectroUV:
     def help(self):
         # self.data_plotter()
         # self.area_plotter()
-        params = {'filter': 'Filter   -> Filtro del nombre de archivos a cargar',
-                'title': 'Cinética   -> Titulo del gráfico',
+        params = {'filter': '\'Filter\'   -> Filtro del nombre de archivos a cargar',
+                'title': '\'Cinética\'   -> Titulo del gráfico',
                 'subtitle': 'None   -> Subtitulo del gráfico',
-                'index' : 'Wavelength || None   -> Etiqueta de indinces de la tabla de datos',
-                'xlabel': 'Longitud de onda (nm)   -> Etiqueta del eje x',
-                'ylabel': 'Abosorbancia   -> Etiqueta del eje y',
+                'index' : '\'Wavelength\' || None   -> Etiqueta de indinces de la tabla de datos',
+                'xlabel': '\'Longitud de onda (nm)\'   -> Etiqueta del eje x',
+                'ylabel': '\'Abosorbancia\'   -> Etiqueta del eje y',
                 'x0' : '200   -> Valor inicial de x para graficar',
                 'xf' : 'None   -> Vaor final de x para graficar',
                 'y0' : '-0.05   -> Valor inicial de y para graficar',
@@ -230,9 +230,20 @@ class SpectroUV:
                 'cf' : 'None   -> Columna final para graficar',
                 'width' : '23   -> Ancho del gráfico en cm',
                 'height' : '15   -> Alto del gráfico en cm',
-                'visible': 'True || False  -> Mostrar o no mostrar gráfico '}
-        params_area= {'dx' : '   -> Desplazamiento en x para el cálculo de areas'}
+                'visible': 'True || False  -> Mostrar o no el gráfico '}
+        params_area= {'title' : '\'Cinética\'   -> Titulo del gráfico de areas',
+                      'subtitle' : '\'Area bajo la curva\'   -> Subtitulo del gráfico de areas',
+                      'xlabel' : '\'Tiempo (h)\'   -> Eiqueta del eje x',
+                      'ylabel' : '\'Area\'   -> Eiqueta del eje y',
+                      'dx' : '1.5   -> Desplazamiento en x para el cálculo de areas',
+                      'labelx' : '\'Area\'   -> Leyenda de los puntos de area',
+                      'labely' : '\'y\'   -> Leyenda de la linea de regresión lineal',
+                      'width' : '23   -> Ancho del gráfico de areas',
+                      'height' : '15   -> Alto del gráfico de areas',
+                      'dx' : '1.0   -> Paso de integración para el cálculo de areas',
+                      'visible' : 'True   -> Mostrar o no el gráfico de areas'}
         print("""
+        
 INSTRUCCIONES DE USO:
 
     Creación del objeto spectroUV():
