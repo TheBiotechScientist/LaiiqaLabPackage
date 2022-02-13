@@ -25,11 +25,12 @@ install_requires = [
 ],
 packages = find_packages(),
 classifiers = [
-    'Development Status :: 1 - Stable',
+    'Development Status :: 2 - Pre-Alpha',
     'License :: OSI Approved :: MIT License',
-    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.0',
+    'Programming Language :: Python :: 3.6'
     'Programming Language :: Python :: 3.7',
     'Operating System :: OS Independent',
-    'Topic :: Data Science'
+    'Topic :: Scientific/Engineering'
     ]
 )
