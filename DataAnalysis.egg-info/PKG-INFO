@@ -1,14 +1,11 @@
 Metadata-Version: 2.1
 Name: DataAnalysis
-Version: 1.0.0
-Summary: Package for ozonation and spectro uv data analysis files
+Version: 1.0.1
+Summary: Package for ozonation, spectro uv and bioreaction data analysis files
 Home-page: UNKNOWN
-Author: F. Javier Morales
+Author: F. Javier Morales M.
 Author-email: fmoralesm87@gmail.com
 License: MIT License
-Description: # Data Analysis Package
-        Paquete para el anÃ¡lisis y graficado de los datos obtenidos de las cinÃ©ticas de ozonizaciÃ³n (.mat) y los obtenidos del espectro UV/Vis (.asc).
-        
 Platform: UNKNOWN
 Classifier: Development Status :: 1 - Stable
 Classifier: License :: OSI Approved :: MIT License
@@ -18,3 +15,9 @@ Classifier: Operating System :: OS Independent
 Classifier: Topic :: Data Science
 Requires-Python: >=3.7
 Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# Data Analysis Package
+LibrerÃ­a para el anÃ¡lisis numÃ©rico y grÃ¡fico de los datos obtenidos de los equipos de ozonizaciÃ³n (.mat), espectrofotÃ³metro UV/Vis (.asc) y biorreacciones (datos en variables), en el Laboratorio de IngenierÃ­a QuÃ­mica y Ambiental.
+
+

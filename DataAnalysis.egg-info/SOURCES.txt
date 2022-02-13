@@ -1,9 +1,11 @@
+LICENSE
 MANIFEST.in
 README.md
 setup.py
 DataAnalysis/__init__.py
 DataAnalysis/helpers.py
 DataAnalysis/ozonation.py
+DataAnalysis/raw.py
 DataAnalysis/spectroUV.py
 DataAnalysis/spectrouv.py
 DataAnalysis.egg-info/PKG-INFO

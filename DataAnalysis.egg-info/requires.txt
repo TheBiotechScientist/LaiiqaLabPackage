@@ -4,3 +4,4 @@ pandas
 matplotlib
 h5py
 sklearn
+IPython
