@@ -7,77 +7,116 @@ from DataAnalysis.helpers import *
 
 class RawData:
 
-    # raw_frame = pd.DataFrame()
+    # frame = pd.DataFrame()
 
-    def ___init__(self, data):
-        self.data = data
-        # self.raw_data(self.data)
-        # return self.raw_frame
-
-    def raw_data(self, data, showframe=False):
+    # def ___init__(self, data):
         # self.data = data
-        self.raw_frame = pd.DataFrame()
-        for i in range(len(data)):
-            self.raw_frame[list(self.data)[i]] = self.data[list(self.data)[i]]
+        # self.raw_data(self.data)
+        # return self.frame
 
-        # self.raw_frame.index = self.raw_frame[self.raw_frame.columns[0]]
-        if showframe == True:
-            return self.raw_frame
+    # def raw_data(self, data, showframe=False):
+    #     # self.data = data
+    #     self.frame = pd.DataFrame()
+    #     for i in range(len(data)):
+    #         self.frame[list(self.data)[i]] = self.data[list(self.data)[i]]
+    #
+    #     # self.frame.index = self.frame[self.frame.columns[0]]
+    #     if showframe == True:
+    #         return self.frame
 
     # @property
-    # def raw_frame(self):
-    #     return self.raw_frame
+    # def frame(self):
+    #     return self.frame
 
-    # @raw_frame.setter
-    # def raw_frame(self):
-    #     return self.raw_frame
+    # @frame.setter
+    # def frame(self):
+    #     return self.frame
 
     # , secondary_y=False, subplots=False):
-    def raw_plotter(self, frame, x=None, title='title=\'Titulo\'', subtitle='subtitle=\'Subtitulo\'', xlabel='xlabel=\'Xlabel\'', ylabel='ylabel=\'Ylabel\'', ylabel2='ylabel2=\'Ylabel 2\'', width=23, height=15, secondary_y=False, subplots=False, grid=True, interp='cubic', steps=200, **kwargs):
-        frame.index = frame[frame.columns[0]]
-        func = dict()
-        for i in range(1, len(frame.columns)):
-            func[i] = interp1d(
-                frame.index, frame[frame.columns[i]], kind=interp)
+    def plot(self, data, title='title=\'Titulo\'', subtitle='subtitle=\'Subtitulo\'', xlabel='xlabel=\'Xlabel\'', ylabel='ylabel=\'Ylabel\'', ylabel2='ylabel2=\'Ylabel 2\'', x=None, width=23, height=15, secondary_y=False, subplots=False, grid=True, interpolation=False, interp='cubic', steps=200, **kwargs):
+        self.data = data
+        w = cm2in(width)
+        h = cm2in(height)
 
-        self.interp_frame = pd.DataFrame()
-        indx = np.linspace(0, max(frame[frame.columns[0]]), steps)
+        self.frame = pd.DataFrame()
+        for i in range(len(data)):
+            self.frame[list(self.data)[i]] = self.data[list(self.data)[i]]
 
-        for j in range(1, len(frame.columns)):
-            self.interp_frame[frame.columns[j]] = func[j](indx)
 
-        self.interp_frame.index = indx
+        self.frame.index = self.frame[self.frame.columns[0]]
 
-        if subplots == False:
-            fig = self.interp_frame.plot(figsize=(cm2in(width), cm2in(height)), secondary_y=secondary_y, grid=grid, **kwargs)
-            plt.suptitle(title, fontsize=14)
-            fig.set_title(subtitle, fontsize=12)
-            fig.set_xlabel(xlabel, fontsize=12)
-            fig.set_ylabel(ylabel, fontsize=12)
-            if secondary_y != False:
-                ylabel2 = secondary_y
-                fig.right_ax.set_ylabel(ylabel2, fontsize=12)
+        if interpolation == True:
+            func = dict()
+            for i in range(1, len(self.frame.columns)):
+                func[i] = interp1d(
+                    self.frame.index, self.frame[self.frame.columns[i]], kind=interp)
 
-            self.raw_plot = fig.get_figure()
-            plt.close()
-            return self.raw_plot
+            self.frame_intp = pd.DataFrame()
+            indx = np.linspace(0, max(self.frame[self.frame.columns[0]]), steps)
 
-        else: #subplots == True:
-            color = plt.rcParams["axes.prop_cycle"]()
-            fig, axes = plt.subplots(nrows=3, ncols=1, sharex=True)
-            for n in range(0,len(self.interp_frame.columns)):
-                c = next(color)['color']
-                axes[n].plot(self.interp_frame[self.interp_frame.columns[n]], color=c)
-                axes[n].legend([self.interp_frame.columns[n]])
-                axes[n].grid(grid)
+            for j in range(1, len(self.frame.columns)):
+                self.frame_intp[self.frame.columns[j]] = func[j](indx)
 
-            fig.suptitle(title)
-            fig.supxlabel(xlabel)
-            fig.supylabel(ylabel)
-            self.raw_plot = fig.get_figure()
-            plt.close()
-            return self.raw_plot
+            self.frame_intp.index = indx
+            if subplots == False:
+                fig = self.frame_intp.plot(figsize=(w, h), secondary_y=secondary_y, grid=grid, **kwargs)
+                plt.suptitle(title, fontsize=14)
+                fig.set_title(subtitle, fontsize=12)
+                fig.set_xlabel(xlabel, fontsize=12)
+                fig.set_ylabel(ylabel, fontsize=12)
+                if secondary_y != False:
+                    ylabel2 = secondary_y
+                    fig.right_ax.set_ylabel(ylabel2, fontsize=12)
 
+                self.figure = fig.get_figure()
+                plt.close()
+                return self.figure
+
+            else: #subplots == True:
+                color = plt.rcParams["axes.prop_cycle"]()
+                fig, axes = plt.subplots(nrows=3, ncols=1, sharex=True)
+                for n in range(0,len(self.frame_intp.columns)):
+                    c = next(color)['color']
+                    axes[n].plot(self.frame_intp[self.frame_intp.columns[n]], color=c)
+                    axes[n].legend([self.frame_intp.columns[n]])
+                    axes[n].grid(grid)
+
+                fig.suptitle(title)
+                fig.supxlabel(xlabel)
+                fig.supylabel(ylabel)
+                self.figure = fig.get_figure()
+                plt.close()
+                return self.figure
+        else: # interpolation == False
+            if subplots == False:
+                fig = self.frame.plot(x=x, figsize=(w, h), secondary_y=secondary_y, grid=grid, **kwargs)
+                plt.suptitle(title, fontsize=14)
+                fig.set_title(subtitle, fontsize=12)
+                fig.set_xlabel(xlabel, fontsize=12)
+                fig.set_ylabel(ylabel, fontsize=12)
+                if secondary_y != False:
+                    ylabel2 = secondary_y
+                    fig.right_ax.set_ylabel(ylabel2, fontsize=12)
+
+                self.figure = fig.get_figure()
+                plt.close()
+                return self.figure
+
+            else: #subplots == True:
+                color = plt.rcParams["axes.prop_cycle"]()
+                fig, axes = plt.subplots(nrows=3, ncols=1, sharex=True)
+                for n in range(0,len(self.frame.columns)):
+                    c = next(color)['color']
+                    axes[n].plot(self.frame[self.frame.columns[n]], color=c)
+                    axes[n].legend([self.frame.columns[n]])
+                    axes[n].grid(grid)
+
+                fig.suptitle(title)
+                fig.supxlabel(xlabel)
+                fig.supylabel(ylabel)
+                self.figure = fig.get_figure()
+                plt.close()
+                return self.figure
             # def raw_plotter(self, frame, suptitle='Cinética de Crecimiento', title='',xlabel='Tiempo (h)', ylabel='DO (600nm)', ylabel2='DO (unidades Bug)',c0=1, cf=None,grid=True, linestyle='-', xsize=23, ysize=15, subplots=False, sharex=False,sharey=False):#, time):
             #
             #     # frame.index = frame[frame.columns[0]]
