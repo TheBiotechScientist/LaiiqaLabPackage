@@ -22,24 +22,24 @@ class Ozonation:
 
         f = h5.File(matfile,'r')
         data = np.array(f.get(var))
-        self.allframe = pd.DataFrame(data)
-        self.allframe = self.allframe.rename(columns={self.allframe.columns[0]:time, 1:'conc'})
-        self.allframe.index = self.allframe[time]
+        self.frameall = pd.DataFrame(data)
+        self.frameall = self.frameall.rename(columns={self.frameall.columns[0]:time, 1:'conc'})
+        self.frameall.index = self.frameall[time]
         if time == 'min':
-            self.allframe = self.allframe.rename(columns={self.allframe.columns[0]:time})
-            self.allframe[time] = self.allframe[time]/60
-            self.allframe.index = self.allframe[time]
+            self.frameall = self.frameall.rename(columns={self.frameall.columns[0]:time})
+            self.frameall[time] = self.frameall[time]/60
+            self.frameall.index = self.frameall[time]
 
         elif time == 'h':
-            self.allframe = self.allframe.rename(columns={self.allframe.columns[0]:time})
-            self.allframe[time] = self.allframe[time]/3600
-            self.allframe.index = self.allframe[time]
+            self.frameall = self.frameall.rename(columns={self.frameall.columns[0]:time})
+            self.frameall[time] = self.frameall[time]/3600
+            self.frameall.index = self.frameall[time]
 
 
         if xf == None:
-            xf = max(self.allframe[time])
+            xf = max(self.frameall[time])
 
-        self.frame = self.allframe[x0:xf]
+        self.frame = self.frameall[x0:xf]
 
         # fig = self.frame[self.x0:self.xf].plot(x=time, y='conc', figsize=[wcm,hcm], label=label, grid=grid, **kwargs)
         fig = self.frame.plot(x=time, y='conc', figsize=[wcm,hcm], label=label, grid=grid, **kwargs)
@@ -53,47 +53,46 @@ class Ozonation:
         self.figure = fig.get_figure()
         # plt.show()
 
-        self.area_bc_val = trapz(x=self.frame[time][x0:xf], y=self.frame['conc'][x0:xf], dx=dx)
-        self.area_sc_val = (max(self.frame[time][x0:xf])*max(self.frame['conc'][x0:xf]) - self.area_bc_val)
+        self.residual = trapz(x=self.frame[time][x0:xf], y=self.frame['conc'][x0:xf], dx=dx)
+        self.consumido = (max(self.frame[time][x0:xf])*max(self.frame['conc'][x0:xf]) - self.residual)
 
-        # Considerar quitar esto, ya que el cosumo es por cada 0.5 L/min,
-        # por lo tanto, debe ir en unidades de minutos.
-        # if time == 'seg':
-        #     self.area_bc_val = self.area_bc_val/60
-        #     self.area_sc_val = self.area_sc_val/60
-        # elif time == 'h':
-        #     self.area_bc_val = self.area_bc_val*60
-        #     self.area_sc_val = self.area_sc_val*60
+
+        if time == 'seg':
+            self.residual = self.residual/60
+            self.consumido = self.consumido/60
+        elif time == 'h':
+            self.residual = self.residual*60
+            self.consumido = self.consumido*60
 
         # Agregar la opción de unidades g/Nm3 o g/L
         if units == 'g/nm3':
-            self.area_bc = r'Ozono residual = {0:.2f} g/Nm^3 en {1:.0f} {2}'.format(float(self.area_bc_val), max(self.frame[time][x0:xf])-x0,time)
+            self.residual_print = r'Ozono residual = {0:.2f} g/Nm^3 en {1:.0f} {2}'.format(float(self.residual), max(self.frame[time][x0:xf])-x0,time)
 
-            self.area_bc_ltx = Latex(r'Ozono residual = $${0:.2f}~g/Nm^3$$ en {1:.0f} {2}'.format(float(self.area_bc_val),max(self.frame[time][x0:xf])-x0,time))
+            self.residual_latex = Latex(r'Ozono residual = $${0:.2f}~g/Nm^3$$ en {1:.0f} {2}'.format(float(self.residual),max(self.frame[time][x0:xf])-x0,time))
 
-            self.area_sc = r'Ozono consumido = {0:.2f} g/Nm^3 en {1:.0f} {2}'.format(float(self.area_sc_val),max(self.frame[time][x0:xf])-x0,time)
+            self.consumido_print = r'Ozono consumido = {0:.2f} g/Nm^3 en {1:.0f} {2}'.format(float(self.consumido),max(self.frame[time][x0:xf])-x0,time)
 
-            self.area_sc_ltx = Latex(r'Ozono consumido = $${0:.2f}~g/Nm^3$$ en {1:.0f} {2}'.format(float(self.area_sc_val),max(self.frame[time][x0:xf])-x0,time))
+            self.consumido_latex = Latex(r'Ozono consumido = $${0:.2f}~g/Nm^3$$ en {1:.0f} {2}'.format(float(self.consumido),max(self.frame[time][x0:xf])-x0,time))
 
-            self.area_t = self.area_bc_val + self.area_sc_val
-            self.area_total = f'Total ozono generado = {self.area_t:.2f} g/Nm^3 en {max(self.frame[time][x0:xf])-x0:.0f} {time}'
-            self.area_total_ltx = Latex(f'Total ozono generado = $${self.area_t:.2f}~g/Nm^3$$ en {max(self.frame[time][x0:xf])-x0:.0f} {time}')
+            self.total = self.residual + self.consumido
+            self.total_print = f'Total ozono generado = {self.total:.2f} g/Nm^3 en {max(self.frame[time][x0:xf])-x0:.0f} {time}'
+            self.total_latex = Latex(f'Total ozono generado = $${self.total:.2f}~g/Nm^3$$ en {max(self.frame[time][x0:xf])-x0:.0f} {time}')
 
         if units == 'g/l':
-            self.area_bc_val = self.area_bc_val/1000
-            self.area_sc_val = self.area_sc_val/1000
+            self.residual = self.residual/1000
+            self.consumido = self.consumido/1000
 
-            self.area_bc = r'Ozono residual = {0:.2f} g/L en {1:.0f} {2}'.format(float(self.area_bc_val), max(self.frame[time][x0:xf])-x0,time)
+            self.residual_print = r'Ozono residual = {0:.2f} g/L en {1:.0f} {2}'.format(float(self.residual), max(self.frame[time][x0:xf])-x0,time)
 
-            self.area_bc_ltx = Latex(r'Ozono residual = $${0:.2f}~g/L$$ en {1:.0f} {2}'.format(float(self.area_bc_val),max(self.frame[time][x0:xf])-x0,time))
+            self.residual_latex = Latex(r'Ozono residual = $${0:.2f}~g/L$$ en {1:.0f} {2}'.format(float(self.residual),max(self.frame[time][x0:xf])-x0,time))
 
-            self.area_sc = r'Ozono consumido = {0:.2f} g/L en {1:.0f} {2}'.format(float(self.area_sc_val),max(self.frame[time][x0:xf])-x0,time)
+            self.consumido_print = r'Ozono consumido = {0:.2f} g/L en {1:.0f} {2}'.format(float(self.consumido),max(self.frame[time][x0:xf])-x0,time)
 
-            self.area_sc_ltx = Latex(r'Ozono consumido = $${0:.2f}~g/L$$ en {1:.0f} {2}'.format(float(self.area_sc_val),max(self.frame[time][x0:xf])-x0,time))
+            self.consumido_latex = Latex(r'Ozono consumido = $${0:.2f}~g/L$$ en {1:.0f} {2}'.format(float(self.consumido),max(self.frame[time][x0:xf])-x0,time))
 
-            self.area_t = self.area_bc_val + self.area_sc_val
-            self.area_total = f'Total ozono generado = {self.area_t:.2f} g/L en {max(self.frame[time][x0:xf])-x0:.0f} {time}'
-            self.area_total_ltx = Latex(f'Total ozono generado = $${self.area_t:.2f}~g/L$$ en {max(self.frame[time][x0:xf])-x0:.0f} {time}')
+            self.total = self.residual + self.consumido
+            self.total_print = f'Total ozono generado = {self.total:.2f} g/L en {max(self.frame[time][x0:xf])-x0:.0f} {time}'
+            self.total_latex = Latex(f'Total ozono generado = $${self.total:.2f}~g/L$$ en {max(self.frame[time][x0:xf])-x0:.0f} {time}')
 
         if visible == False:
             plt.close()
