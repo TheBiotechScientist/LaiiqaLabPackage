@@ -42,133 +42,135 @@ import natsort as nsrt
 from DataAnalysis.helpers import *
 
 # Mod 1.2.4
-class spectroUV:
+class SpectroUV:
+
+    # def data_filter(self, filter):
+    #     filtered_files = list()
+    #     files = nsrt.natsorted(listdir())
+    #     for i in files:
+    #         if filter in i:
+    #             filtered_files.append(i)
+    #
+    #     data = dict()
+    #     data = {'Wavelenght': list(range(700, 199, -1))}
+    #
+    #     filtered_files = [s.split('.') for s in filtered_files]
+    #     ext = filtered_files[0][1]
+    #     filtered_files = [s.pop(0) for s in filtered_files]
+    #
+    #     for file_name in filtered_files:
+    #         abscol = list()
+    #         with open(file_name + '.' + ext, 'rb') as file:
+    #             data.update({file_name: []})
+    #             for i in range(88):
+    #                 file.readline()
+    #
+    #             for line in file:
+    #                 columns = line.strip().split()
+    #                 abscol.append(float(columns[1]))
+    #
+    #             abs_array = np.array(abscol)
+    #             data[file_name] = abs_array
+    #             abscol = []
+    #     # return data
+    #     self.frameall = pd.DataFrame(data)
+    #     self.spectro_plotter(visible=False)
+    #     self.area_plotter(visible=False)
 
 
-    def __init__(self):
-        self.data = dict()
-        self.title = 'Cinética'
-        self.index = 'Wavelenght'
-        self.x0 = 200
-        self.xf = 300
-        self.y0 = -0.05
-        self.yf = 5.0
-        self.c0 = 1
-        self.cf = 15
-        self.width = 23
-        self.height = 15
-        self.dx=1.0
-        # self.folder = 'CS1M150mLFiltrados'
-        self.filter = 'CS1F-Dex'
-        # self.area_params = {'dx' : 1.0}
+    def plot(self, filter='Filter', title='Espectro UV', subtitle=None, index='Wavelength', xlabel='Longitud de onda (nm)', ylabel='Absorbancia', x0=200, xf=None, y0=-0.05, yf=5.0, c0=0, cf=None, width=23, height=15, grid=True, visible=True):
+        w = cm2in(width)
+        h = cm2in(height)
+        self.c0 = c0
+        self.x0 = x0
+        self.xf = xf
+        filtered_files = list()
+        files = nsrt.natsorted(listdir())
+        for i in files:
+            if filter in i:
+                filtered_files.append(i)
 
+        data = dict()
+        data = {index: []}
 
-    def data_filter(self, filter):
-        # self.folder = folder
-        self.filter = filter
-        self.filtered_files = list()
-        self.files = nsrt.natsorted(listdir())
-        for i in self.files:
-            if self.filter in i:
-                self.filtered_files.append(i)
+        ext = filtered_files[0].rsplit('.', 1)[1]
+        filtered_files = [s.rsplit('.', 1) for s in filtered_files]
+        filtered_files = [s.pop(0) for s in filtered_files]
+        # print(filtered_files)
+        # print(ext)
 
-        self.data = {}
-        self.data = {'Wavelenght': list(range(700, 199, -1))}
-
-        self.filtered_files = [s.split('.') for s in self.filtered_files]
-        ext = self.filtered_files[0][1]
-        self.filtered_files = [s.pop(0) for s in self.filtered_files]
-
-        for file_name in self.filtered_files:
+        for file_name in filtered_files:
+            wave = list()
             abscol = list()
-            with open(file_name + '.' + ext, 'rb') as file:
-                self.data.update({file_name: []})
+            with open(file_name + '.' + ext, 'r') as file:
+                data.update({file_name: []})
                 for i in range(88):
                     file.readline()
 
                 for line in file:
                     columns = line.strip().split()
+                    wave.append(int(float(columns[0])))
                     abscol.append(float(columns[1]))
 
+                wave_array = np.array(wave)
                 abs_array = np.array(abscol)
-                self.data[file_name] = abs_array
+                data[file_name] = abs_array
+                data[index] = wave_array
+                wave = []
                 abscol = []
-        # return self.data
-        self.data_frame = pd.DataFrame(self.data)
-        self.spectro_plotter(visible=False)
-        self.area_plotter(visible=False)
+        # return data
+        self.frameall = pd.DataFrame(data)
+        # self.plot(visible=False)
+        # self.area_plotter(visible=False)
 
 
-    def spectro_plotter(self, title='Cinética', subtitle=None, index='Wavelenght', x0=200, xf=None, y0=-0.05, yf=5.0, c0=0, cf=None, width=23, height=15, visible=True, xlabel='Longitud de onda (nm)', ylabel='Absorbancia'):
-        self.title = title
-        self.subtitle = subtitle
-        self.xlabel=xlabel
-        self.ylabel=ylabel
-        self.index = index
-        if self.index == 'Wavelenght':
-            self.data_frame.index = self.data[self.index]
-        elif self.index == None:
-            self.data_frame.index = self.data_frame.index
+        if index == 'Wavelength':
+            self.frameall.index = data[index]
+        elif index == None:
+            self.frameall.index = self.frameall.index
         else:
-            self.data_frame.index = self.index
+            self.frameall.index = index
 
-        self.x0 = x0
-        self.xf = xf
 
         if self.xf == None:
-            self.xf = max(self.data_frame.index)
+            self.xf = max(self.frameall.index)
         else:
-            self.xf = xf
+            self.xf = self.xf
 
-        self.y0 = y0
-        self.yf = yf
-        self.c0 = c0
-        self.cf = cf
-        if self.cf == None:
-            self.cf = len(self.data_frame.columns)
+        if cf == None:
+            cf = len(self.frameall.columns)
         else:
-            self.cf = cf
+            cf = cf
 
-        self.width = cm2in(width)
-        self.height = cm2in(height)
-
-        self.frame = self.data_frame.iloc[700-self.xf:701-self.x0,self.c0:self.cf+1]
-        self.figure = self.data_frame.plot(x=self.data_frame.columns[0], y=self.data_frame.columns[self.c0+1:self.cf+1], legend=True, figsize=(self.width, self.height))
-        plt.suptitle(self.title, fontsize=14)
-        self.figure.set_title(self.subtitle, fontsize=12)
-        self.figure.set_xlim(self.x0, self.xf)
-        self.figure.set_ylim(self.y0, self.yf)
-        self.figure.set_xlabel(self.xlabel, fontsize=14)
-        self.figure.set_ylabel(self.ylabel, fontsize=14)
-        # self.figure.set_visible(visible)
-        plt.grid()
-        # plt.show()
+        self.frame = self.frameall.iloc[max(self.frameall.index)-self.xf:max(self.frameall.index)+1-self.x0,self.c0:cf+1]
+        fig = self.frame.plot(y=self.frame.columns[self.c0+1:cf+1], legend=True, figsize=(w, h), grid=grid)
+        plt.suptitle(title, fontsize=14)
+        fig.set_title(subtitle, fontsize=12)
+        fig.set_xlim(self.x0, self.xf)
+        fig.set_ylim(y0, yf)
+        fig.set_xlabel(xlabel, fontsize=14)
+        fig.set_ylabel(ylabel, fontsize=14)
+        # plt.grid()
+        self.figure = fig.get_figure()
         if visible == False:
             plt.close()
-
-        self.spectro_plot = self.figure.get_figure()
-        self.area_plotter(visible=False)
-        # return self.figure, self.x0, self.xf, self.title, self.frame
-
-
-
-    def area_plotter(self, dx=1.0, visible=True, labela='Area', labelb='y', subtitle='Area bajo la curva ', xlabel='Tiempo (h)', ylabel='Area'):
-        self.dx = dx
-        self.labela = labela
-        self.labelb = labelb
-        self.xlabel_a = xlabel
-        self.ylabel_a = ylabel
-        self.subtitle = subtitle
-
-        if self.subtitle == 'Area bajo la curva ':
-            self.subtitle = f'Area bajo la curva ({self.x0} - {self.xf} nm)'
         else:
-            self.subtitle = subtitle
+            plt.show()
+
+
+    def plot_area(self, title='Espectro UV', subtitle='Area bajo la curva', xlabel='Tiempo (h)', ylabel='Area', labelx='Area', labely='y', width=23, height=15, dx=1.0, visible=True):
+        w = cm2in(width)
+        h = cm2in(height)
+
+        if subtitle == 'Area bajo la curva':
+            subtitle = f'Area bajo la curva ({self.x0} - {self.xf} nm)'
+        else:
+            subtitle = subtitle
 
         area = list()
 
         for i in range(self.c0+1,len(self.frame.columns)):
-            area_trapz = trapz(y=self.frame.iloc[:,i], dx=self.dx)
+            area_trapz = trapz(y=self.frame.iloc[:,i], dx=dx)
             area.append(area_trapz)
 
         self.area_x = np.array(range(len(area))).reshape(-1,1)
@@ -182,91 +184,102 @@ class spectroUV:
         self.r_sq = reg_line.score(self.area_x, self.area_y)
 
         # plt.rcParams['text.usetex'] = True
-        eq = '$y = {0:.2f}x + {1:.2f}$\n $R^2 = {2:.4f}$'.format(float(self.beta),self.alfa,self.r_sq)
-        eq_latex = r'$$y = {0:.2f}x + {1:.2f}$$ $$R^2 = {2:.4f}$$'.format(float(self.beta),self.alfa,self.r_sq)
-        self.reg_equation = Latex(eq_latex)
+        self.reg_equation = '$y = {0:.2f}x + {1:.2f}$\n $R^2 = {2:.4f}$'.format(float(self.beta),self.alfa,self.r_sq)
+        self.reg_equation_latex = Latex(self.reg_equation)
 
-        self.area_plot = plt.figure(figsize=(self.width, self.height))
-        plt.plot(self.area_x, self.area_y, label=self.labela, marker='^', linestyle='dashed')
-        plt.plot(self.area_x, self.Y_pred, color='red', label=self.labelb)
+        area_plot = plt.figure(figsize=(w, h))
+        plt.plot(self.area_x, self.area_y, label=labelx, marker='^', linestyle='dashed')
+        plt.plot(self.area_x, self.Y_pred, color='red', label=labely)
         # plt.gcf().set_size_inches(10,5) # otra opción para el tamaño de gráfico
-        plt.suptitle(self.title, fontsize=14)
-        plt.title(self.subtitle, fontsize=12)
+        plt.suptitle(title, fontsize=14)
+        plt.title(subtitle, fontsize=12)
         # plt.subtitle(subtitle)
-        plt.xlabel(self.xlabel_a, fontsize=14)
-        plt.ylabel(self.ylabel_a, fontsize=14)
-        plt.text(int(max(self.area_x)/2), max(self.area_y)-max(self.area_y)*0.15, eq, fontsize=12)
+        plt.xlabel(xlabel, fontsize=14)
+        plt.ylabel(ylabel, fontsize=14)
+        plt.text(int(max(self.area_x)/2), max(self.area_y)-max(self.area_y)*0.15, self.reg_equation, fontsize=12)
         plt.grid()
         plt.legend()
-        # self.figure_area.set_visible(visible)
+        # fig_area.set_visible(visible)
         # plt.xlim(range(len(area)))
         # plt.ylim(-0.05,5.0)
         # plt.show()
+        self.figure_area = area_plot.get_figure()
         if visible == False:
             plt.close()
+        else:
+            plt.show()
 
-        # self.area_plot = self.figure_area.gcf()
-        # return self.figure_area, self.reg_equation
-
+        # self.area_plot = fig_area.gcf()
+        # return fig_area, self.reg_equation
 
     @property
     def help(self):
         # self.data_plotter()
         # self.area_plotter()
-        params = {'title': '\''+self.title+'\''+'   -> Titulo de los gráficos',
-                'index' : '\''+self.index+'\''+'o None   -> Etiqueta de indinces de la tabla de datos',
-                'x0' : str(self.x0)+'   -> Valor inicial de x para graficar',
-                'xf' : str(self.xf)+'   -> Vaor final de x para graficar',
-                'y0' : str(self.y0)+'   -> Valor inicial de y para graficar',
-                'yf' : str(self.yf)+'   -> Valor final de y para graficar',
-                'c0' : str(self.c0)+'   -> Columna inicial para graficar',
-                'cf' : str(self.cf)+'   -> Columna final para graficar',
-                'width' : str(self.width)+'   -> Ancho del gráfico en cm',
-                'height' : str(self.height)+'   -> Alto del gráfico en cm'}
-        params_area= {'dx' : str(self.dx)+'   -> Desplazamiento en x para el cálculo de areas'}
+        params = {'filter': 'Filter   -> Filtro del nombre de archivos a cargar',
+                'title': 'Cinética   -> Titulo del gráfico',
+                'subtitle': 'None   -> Subtitulo del gráfico',
+                'index' : 'Wavelength || None   -> Etiqueta de indinces de la tabla de datos',
+                'xlabel': 'Longitud de onda (nm)   -> Etiqueta del eje x',
+                'ylabel': 'Abosorbancia   -> Etiqueta del eje y',
+                'x0' : '200   -> Valor inicial de x para graficar',
+                'xf' : 'None   -> Vaor final de x para graficar',
+                'y0' : '-0.05   -> Valor inicial de y para graficar',
+                'yf' : '0.5   -> Valor final de y para graficar',
+                'c0' : '0   -> Columna inicial para graficar',
+                'cf' : 'None   -> Columna final para graficar',
+                'width' : '23   -> Ancho del gráfico en cm',
+                'height' : '15   -> Alto del gráfico en cm',
+                'visible': 'True || False  -> Mostrar o no mostrar gráfico '}
+        params_area= {'dx' : '   -> Desplazamiento en x para el cálculo de areas'}
         print("""
 INSTRUCCIONES DE USO:
 
     Creación del objeto spectroUV():
         Para crear el objeto asignamos a una variable dicho objeto:
 
-        var = spectroUV()
+        obj = SpectroUV()
 
-        Una vez creado el objeto podemos cargar los archivos a analizar con
-        la función data_filter(), la cual acepta dos parámetros:
+        Una vez creado el objeto podemos cargar y graficar los archivos a analizar con
+        la función plot(), la cual acepta un parámetro obligatorio:
 
-        var.data_filter(\'<Nombre_de_carpeta>\', \'<filtro_de_archivos>\')
+        obj.plot(\'<filtro_de_archivos_a_graficar>\')
 
         Ejemplo:
 
-        var.data_filter(\'{}\', \'{}\')\n""".format(self.folder, self.filter))
+        obj.plot('2021_01_')   -> Graficará todos los archivos en carpeta que empiecen con la cadena de caracteres '2021_01_'.
+
+        \n""")
 
         print("""
 
     Propiedades:
-    Con lo anterior ya podemos utilizar las siguientes propiedades y  funciones:
+    Con lo anterior ya podemos utilizar las siguientes propiedades y funciones:
 
-        var.help -> Muestra esta ayuda
+        obj.help -> Muestra esta ayuda
 
-        var.frame -> Muestra la tabla de datos creada con los parámetros por default
+        obj.frameall -> Muestra la tabla de datos completos creada
 
-        var.figure -> Muestra el gráfico por default del espectro UV
+        obj.frame -> Mestra la tabla de datos creada con los parámetros x0, xf
 
-        var.figure_area -> Muestra el gráfico por default de las areas bajo la curva
+        obj.figure -> Muestra el gráfico por default del espectro UV
 
-        var.reg_equation -> Muestra la ecuación lineal del gráfico de areas
+        obj.figure_area -> Muestra el gráfico por default de las areas bajo la curva
 
-        var.alfa -> Devuelve el valor de la ordenada al origen de bx + a
+        obj.reg_equation -> Muestra la ecuación de regreseión lineal del gráfico de areas
 
-        var.beta -> Devuelve el valor de la pendiente de bx + a
+        obj.alfa -> Devuelve el valor de la ordenada al origen de bx + a
+
+        obj.beta -> Devuelve el valor de la pendiente de bx + a
 
     Funciones:
     Las siguitenes funciones aceptan parámetros, separados por coma, para cambiar los
     de default:
 
-        spectro_plotter(): Genera gráfico del espectro
+        plot(): Genera gráfico del espectro
 
-        var.spectro_plotter(<parámetro1>=<valor1> , <parámetro2>=<valor2>...)
+        obj.plot(<parámetro1>=<valor1> , <parámetro2>=<valor2>...)
+
 
         Parámetros por default:
         """)
@@ -274,9 +287,11 @@ INSTRUCCIONES DE USO:
             print('\t \t {}={}'.format(key, value))
 
         print("""
-        area_plotter(): Genera gráfico de areas
 
-        var.area_plotter(<parámetro1>=<valor1> , <parámetro2>=<valor2>...)
+        plot_area(): Genera gráfico de areas
+
+        obj.plot_area(<parámetro1>=<valor1> , <parámetro2>=<valor2>...)
+
 
         Parámetros por default:
         """)
@@ -284,12 +299,14 @@ INSTRUCCIONES DE USO:
             print('\t \t {}={}'.format(key, value))
 
         print("""
+
         save_plot(): Guarda la figura actual en formato .PDF o el formato de elección
          (jpg, png, svg)
 
-        var.save_plot(<var.figure> o <var.figure_area>, 'nombre_de_figura.pdf')
+        obj.save_plot(<obj.figure> ó <obj.figure_area>, 'nombre_de_figura.pdf')
+
 
         save_data(): Guarda el frame actual en formato .CSV
 
-        var.save_data('<nombre_de_archivo.csv>')
+        obj.save_data('<nombre_de_archivo.csv>')
         """)
