@@ -1,1 +1,4 @@
-DataAnalysis/__pycache__/
+laiiqa/__pycache__/
+dist/
+build/
+laiiqa_lab_utilities.egg-info/
