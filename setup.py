@@ -1,12 +1,12 @@
 from setuptools import setup, find_packages
 
-with open('README.md') as f:
+with open('README.md', encoding="utf-8") as f:
     long_description = f.read()
 
 setup(
-name = 'DataAnalysis',
-version = '1.0.1',
-description = 'Package for ozonation, spectro uv and bioreaction data analysis files',
+name = 'laiiqa-lab-utilities',
+version = '0.0.0',
+description = 'Package for ozonation, spectro uv and bioreaction data analysis files for the laiiqa laboratory',
 long_description = long_description,
 long_description_content_type = 'text/markdown',
 license = 'MIT License',
@@ -28,9 +28,15 @@ classifiers = [
     'Development Status :: 2 - Pre-Alpha',
     'License :: OSI Approved :: MIT License',
     'Programming Language :: Python :: 3.0',
-    'Programming Language :: Python :: 3.6'
+    'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Operating System :: OS Independent',
-    'Topic :: Scientific/Engineering'
+    'Operating System :: Microsoft :: Windows',
+    'Operating System :: MacOS',
+    'Operating System :: POSIX :: Linux',
+    'Topic :: Scientific/Engineering',
+    'Intended Audience :: Science/Research',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Education'
     ]
 )
