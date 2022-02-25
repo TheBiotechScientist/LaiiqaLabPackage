@@ -14,24 +14,36 @@ from laiiqa.helpers import *
 
 class Ozonation:
 
-    def plot(self, matfile, var='data',title='Cinética de Ozonización', subtitle=None, xlabel='Tiempo ', ylabel='$O_3$ [$g/Nm^3$]', label='Conc. $O_3$', width=23, height=15, x0=0, xf=None, y0=-0.5, yf=35.5, time='seg', units='g/nm3',grid=True, visible=True, dx=1.0, **kwargs):
+    def plot(self, var='data',title='Cinética de Ozonización', subtitle=None, xlabel='Tiempo ', ylabel='$O_3$ [$g/Nm^3$]', label='Conc. $O_3$', width=23, height=15, x0=0, xf=None, y0=-0.5, yf=35.5, time='min', units='g/nm3',grid=True, visible=True, dx=1.0, **kwargs):
+        root = tk.Tk()
+        root.withdraw()
+        filetypes = (('MAT-Files', '*.mat'),)
+        matfile = fd.askopenfilename(
+                title='Seleccionar archivo .mat',
+                filetypes=filetypes)
+
+        matfile_name = matfile.rsplit('/', 1)[1]
         self.time = time
         wcm = cm2in(width)
         hcm = cm2in(height)
 
         if subtitle == None:
-            subtitle = matfile
+            subtitle = matfile_name
 
         f = h5.File(matfile,'r')
         data = np.array(f.get(var))
         self.frameall = pd.DataFrame(data)
-        self.frameall = self.frameall.rename(columns={self.frameall.columns[0]:time, 1:'conc'})
+        self.frameall = self.frameall.rename(columns={self.frameall.columns[0]:time, 1:'concentracion'})
         self.frameall.index = self.frameall[time]
-        if time == 'min':
+
+        if time == 'seg':
+            self.frameall = self.frameall.rename(columns={self.frameall.columns[0]:time})
+            self.frameall[time] = self.frameall[time]
+            self.frameall.index = self.frameall[time]
+        elif time == 'min':
             self.frameall = self.frameall.rename(columns={self.frameall.columns[0]:time})
             self.frameall[time] = self.frameall[time]/60
             self.frameall.index = self.frameall[time]
-
         elif time == 'h':
             self.frameall = self.frameall.rename(columns={self.frameall.columns[0]:time})
             self.frameall[time] = self.frameall[time]/3600
@@ -44,7 +56,7 @@ class Ozonation:
         self.frame = self.frameall[x0:xf]
 
         # fig = self.frame[self.x0:self.xf].plot(x=time, y='conc', figsize=[wcm,hcm], label=label, grid=grid, **kwargs)
-        fig = self.frame.plot(x=time, y='conc', figsize=[wcm,hcm], label=label, grid=grid, **kwargs)
+        fig = self.frame.plot(x=time, y='concentracion', figsize=[wcm,hcm], label=label, grid=grid, **kwargs)
         plt.suptitle(title, fontsize=14)
         plt.title(subtitle, fontsize=12)
         # fig.set_title(subtitle, fontsize=12)
@@ -55,8 +67,8 @@ class Ozonation:
         self.figure = fig.get_figure()
         # plt.show()
 
-        self.residual = trapz(x=self.frame[time][x0:xf], y=self.frame['conc'][x0:xf], dx=dx)
-        self.consumido = (max(self.frame[time][x0:xf])*max(self.frame['conc'][x0:xf]) - self.residual)
+        self.residual = trapz(x=self.frame[time][x0:xf], y=self.frame['concentracion'][x0:xf], dx=dx)
+        self.consumido = (max(self.frame[time][x0:xf])*max(self.frame['concentracion'][x0:xf]) - self.residual)
 
 
         if time == 'seg':
@@ -99,7 +111,8 @@ class Ozonation:
         if visible == False:
             plt.close()
         else:
-            plt.show()
+            return self.figure.show()
+            # plt.show()
 
 
 
@@ -123,5 +136,22 @@ class Ozonation:
         if visible == False:
             plt.close()
         else:
-            plt.show()
-            # return self.joined_plots
+            return self.joined_plots.show()
+            # plt.show()
+
+
+    # Probar como property
+    # @property
+    # def figure2(self):
+    #     wcm = cm2in(width)
+    #     hcm = cm2in(height)
+    #     fig = self.frame.plot(x=self.time, y='conc', figsize=[wcm,hcm], label=label, grid=grid, **kwargs)
+    #     plt.suptitle(title, fontsize=14)
+    #     plt.title(subtitle, fontsize=12)
+    #     # fig.set_title(subtitle, fontsize=12)
+    #     fig.set_xlim(x0, xf)
+    #     fig.set_ylim(y0, yf)
+    #     fig.set_xlabel(xlabel+f'({self.time})', fontsize=12)
+    #     fig.set_ylabel(ylabel, fontsize=12)
+    #     self.figure3 = fig.get_figure()
+    #     return self.figure3
