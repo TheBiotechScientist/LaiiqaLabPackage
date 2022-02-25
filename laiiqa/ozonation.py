@@ -8,6 +8,8 @@ import h5py as h5
 import matplotlib.pyplot as plt
 import pandas as pd
 from IPython.display import display, Latex, Math
+import tkinter as tk
+from tkinter import filedialog as fd
 from laiiqa.helpers import *
 
 class Ozonation:

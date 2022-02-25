@@ -39,6 +39,8 @@ import matplotlib.pyplot as plt
 from IPython.display import display, Latex, Math
 from os import listdir
 import natsort as nsrt
+import tkinter as tk
+from tkinter import filedialog as fd
 from laiiqa.helpers import *
 
 # Mod 1.2.4

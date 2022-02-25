@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
+import tkinter as tk
+from tkinter import filedialog as fd
 from laiiqa.helpers import *
 
 

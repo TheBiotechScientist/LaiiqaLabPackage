@@ -2,6 +2,8 @@ from os import getcwd, listdir, chdir
 import natsort as nsrt
 import pandas as pd
 import matplotlib.pyplot as plt
+import tkinter as tk
+from tkinter import filedialog as fd
 
 figuras = r'C:\Users\javne\Dropbox\Tesis Maestria Javier\Tesis\Figuras'
 figuras_resultados = r'C:\Users\javne\Dropbox\Tesis Maestria Javier\Tesis\Figuras\resultados'
