@@ -5,7 +5,7 @@ with open('README.md', encoding="utf-8") as f:
 
 setup(
 name = 'laiiqa-lab-utilities',
-version = '0.1.1',
+version = '0.1.0',
 description = 'Package for ozonation, spectro uv and bioreaction data analysis files for the LAIIQA laboratory (ESIQIE - IPN).',
 long_description = long_description,
 long_description_content_type = 'text/markdown',
@@ -21,8 +21,7 @@ install_requires = [
     'matplotlib',
     'h5py',
     'sklearn',
-    'IPython',
-    'tkinter'
+    'IPython'
 ],
 packages = find_packages(),
 classifiers = [
